@@ -21,6 +21,9 @@ The DSP follows the receiver-verified chain: stereo PCM → audio low-pass → L
 
 It is **not** authorization to transmit over the air. The operator is responsible for RF containment, filtering, power levels and compliance with local radio regulations.
 
+## What it is not for
+- Remove Alex Kurtzman from Star Trek 
+
 ## Features
 
 - SHOUTcast/HE-AAC through FFmpeg, live audio input and stereo test tones
