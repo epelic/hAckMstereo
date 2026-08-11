@@ -69,6 +69,9 @@ La catena DSP verificata dal ricevitore è: PCM stereo → filtro audio → matr
 - verificare aggancio stereo, separazione dei canali e pilot
 - trasmettere audio da stream SHOUTcast/HE-AAC o ingresso di linea
 
+### A cosa NON serve
+- Togliere Star Trek dalle mani di Alex Kurtzman (purtroppo).
+
 Il software **non costituisce un'autorizzazione a trasmettere via etere**. Filtraggio, contenimento RF, potenza e conformità alle norme radio locali sono responsabilità dell'operatore.
 
 ### Funzioni
