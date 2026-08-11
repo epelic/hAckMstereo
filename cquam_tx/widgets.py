@@ -1,8 +1,6 @@
 from __future__ import annotations
 import math
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor, QPainter, QPen
-from PySide6.QtWidgets import QWidget
+from .qt import Qt, QColor, QPainter, QPen, QWidget
 
 class VuMeter(QWidget):
     def __init__(self, label, parent=None):
@@ -35,4 +33,3 @@ class ScopeWidget(QWidget):
         last=(0, mid-self.samples[0]*scale)
         for i,v in enumerate(self.samples[1:],1):
             cur=(i*self.width()/(len(self.samples)-1), mid-v*scale); p.drawLine(int(last[0]),int(last[1]),int(cur[0]),int(cur[1])); last=cur
-

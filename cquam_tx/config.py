@@ -3,13 +3,22 @@ from dataclasses import asdict, dataclass
 import json
 from pathlib import Path
 import sys
+import os, shutil, ctypes.util
 
 def bundled_file(name: str, fallback: str) -> str:
     base = Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent))
     candidate = base / name
     return str(candidate if candidate.exists() else Path(fallback))
 
-APP_DIR = Path.home() / "AppData" / "Roaming" / "CQUAM-TX"
+def default_hackrf() -> str:
+    if sys.platform == "win32": return bundled_file("hackrf-0.dll", r"C:\Users\epeli\radioconda\Library\bin\hackrf-0.dll")
+    return ctypes.util.find_library("hackrf") or "libhackrf.so.0"
+
+def default_ffmpeg() -> str:
+    if sys.platform == "win32": return bundled_file("ffmpeg.exe", "ffmpeg")
+    return shutil.which("ffmpeg") or "/usr/bin/ffmpeg"
+
+APP_DIR = (Path(os.environ.get("APPDATA", Path.home()/"AppData"/"Roaming")) / "hAckMstereo") if sys.platform == "win32" else Path(os.environ.get("XDG_CONFIG_HOME", Path.home()/".config")) / "hackmstereo"
 CONFIG_FILE = APP_DIR / "config.json"
 
 @dataclass
@@ -29,8 +38,8 @@ class TxConfig:
     rf_amp: bool = True
     rf_amp_inverted: bool = True
     mode: str = "C-QUAM"
-    dll_path: str = bundled_file("hackrf-0.dll", r"C:\Users\epeli\radioconda\Library\bin\hackrf-0.dll")
-    ffmpeg_path: str = bundled_file("ffmpeg.exe", "ffmpeg")
+    dll_path: str = default_hackrf()
+    ffmpeg_path: str = default_ffmpeg()
     rf_sample_rate: int = 8_000_000
     audio_sample_rate: int = 100_000
     block_frames: int = 5000

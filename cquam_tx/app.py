@@ -1,7 +1,6 @@
 from __future__ import annotations
 import sys, traceback
-from PySide6.QtCore import QTimer, Signal, QObject, Qt
-from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDoubleSpinBox, QFileDialog, QFormLayout,
+from .qt import (QTimer, Signal, QObject, Qt, QApplication, QCheckBox, QComboBox, QDoubleSpinBox, QFileDialog, QFormLayout,
  QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QMainWindow, QMessageBox, QPushButton, QSpinBox,
  QPlainTextEdit, QVBoxLayout, QWidget)
 from .config import TxConfig
@@ -87,4 +86,4 @@ class MainWindow(QMainWindow):
     def closeEvent(self,event):self.engine.stop();event.accept()
 
 def main():
-    app=QApplication(sys.argv);app.setStyle("Fusion");app.setStyleSheet(STYLE);w=MainWindow();w.show();return app.exec()
+    app=QApplication(sys.argv);app.setStyle("Fusion");app.setStyleSheet(STYLE);w=MainWindow();w.show();return app.exec() if hasattr(app,"exec") else app.exec_()

@@ -1,29 +1,76 @@
 # hAckMstereo
 
-Trasmettitore AM Stereo C-QUAM per Windows e HackRF, con interfaccia PySide6. Mantiene la matematica C-QUAM V0.7 verificata: matrice L+R/L-R, pilot 25 Hz, correzione d'inviluppo e uscita diretta libhackrf a 8 Msps.
+**English** · [Italiano](#italiano)
 
-## Funzioni
+hAckMstereo is a Windows and Linux desktop transmitter for generating **AM Stereo C-QUAM** baseband with a HackRF. It accepts an internet radio stream, a stereo line input, or built-in 400 Hz left / 1 kHz right test tones and produces continuous 8 Msps I/Q through libhackrf.
 
-- Stream SHOUTcast/HE-AAC tramite FFmpeg, ingresso audio live e toni test stereo
-- VU meter L/R, scope audio, buffer e conteggio underrun
-- Frequenza, bandwidth, gain audio, modulazione, TX VGA e RF AMP configurabili
-- Modalità Mono/C-QUAM, pilot 25 Hz e soft limiter
-- Salvataggio configurazione e shutdown pulito di FFmpeg
+The DSP follows the receiver-verified chain: stereo PCM → audio low-pass → L+R/L−R matrix → 25 Hz stereo pilot → C-QUAM phase modulation with envelope correction → HackRF int8 I/Q. The C-QUAM equations are kept separate from the user interface.
 
-## Avvio
+## What it is for
 
-Da Prompt/PowerShell nella cartella del progetto:
+- experimenting with and testing AM Stereo C-QUAM receivers
+- feeding a shielded RF test setup or suitable dummy load
+- checking stereo decoding, channel separation and pilot lock
+- transmitting programme audio from SHOUTcast/HE-AAC streams or a line input
 
-```bat
-C:\Users\epeli\radioconda\python.exe run.py
+It is **not** authorization to transmit over the air. The operator is responsible for RF containment, filtering, power levels and compliance with local radio regulations.
+
+## Features
+
+- SHOUTcast/HE-AAC through FFmpeg, live audio input and stereo test tones
+- Windows-style PySide interface with L/R VU meters and a lightweight scope
+- frequency, audio bandwidth, input gain, modulation, TX VGA and RF AMP controls
+- Mono/C-QUAM modes, configurable 25 Hz pilot and soft limiter
+- buffer and underrun monitoring, saved configuration and clean FFmpeg shutdown
+- direct libhackrf output at 8 Msps
+
+## Windows
+
+Download `hAckMstereo-Setup-1.0.0.exe` from Releases. The installer includes Python, Qt, FFmpeg and the required HackRF runtime libraries.
+
+## Ubuntu
+
+Download the package matching your release, then install it with:
+
+```bash
+sudo apt install ./hackmstereo_1.0.0-ubuntu24.04_all.deb
+# or
+sudo apt install ./hackmstereo_1.0.0-ubuntu26.04_all.deb
 ```
 
-Per la sorgente Live installare `sounddevice` (`python -m pip install sounddevice`). FFmpeg deve essere disponibile nel PATH. Il percorso DLL predefinito è quello Radioconda già verificato e può essere modificato nel file di configurazione in `%APPDATA%\CQUAM-TX\config.json`.
+Add your user to the appropriate HackRF/plugdev group or install the distro HackRF udev rules if the device is not accessible. Log out and back in after changing group membership.
 
-## Sicurezza e uso
+## Running from source
 
-Collegare HackRF a un carico adatto o a una catena RF conforme. I parametri vengono bloccati durante TX. In questa installazione il comando RF AMP è configurato con polarità invertita: ON invia 0 alla DLL, OFF invia 1. La scelta è salvata come `rf_amp_inverted`.
+```bash
+python -m pip install -r requirements.txt
+python run.py
+```
 
-## EXE
+---
 
-Eseguire `build_exe.bat`. Il risultato è in `dist\hAckMstereo`. FFmpeg e `hackrf-0.dll` restano dipendenze esterne; è preferibile mantenerli nell'ambiente Radioconda già funzionante.
+## Italiano
+
+hAckMstereo è un trasmettitore desktop per Windows e Linux che genera un segnale **AM Stereo C-QUAM** usando HackRF. Accetta uno stream radio internet, un ingresso di linea stereo oppure i toni di prova interni 400 Hz sinistra / 1 kHz destra, producendo I/Q continuo a 8 Msps tramite libhackrf.
+
+La catena DSP verificata dal ricevitore è: PCM stereo → filtro audio → matrice L+R/L−R → pilot stereo a 25 Hz → C-QUAM con correzione d'inviluppo → I/Q int8 per HackRF. La matematica C-QUAM rimane separata dall'interfaccia.
+
+### A cosa serve
+
+- sperimentare con ricevitori AM Stereo C-QUAM
+- alimentare un banco RF schermato o un carico fittizio adeguato
+- verificare aggancio stereo, separazione dei canali e pilot
+- trasmettere audio da stream SHOUTcast/HE-AAC o ingresso di linea
+
+Il software **non costituisce un'autorizzazione a trasmettere via etere**. Filtraggio, contenimento RF, potenza e conformità alle norme radio locali sono responsabilità dell'operatore.
+
+### Funzioni
+
+- stream tramite FFmpeg, ingresso audio live e toni test stereo
+- interfaccia PySide con VU meter L/R e scope leggero
+- frequenza, bandwidth, gain audio, modulazione, TX VGA e RF AMP
+- modalità Mono/C-QUAM, pilot 25 Hz configurabile e soft limiter
+- monitor buffer/underrun, configurazione salvata e chiusura pulita di FFmpeg
+- uscita diretta libhackrf a 8 Msps
+
+Per installazione e avvio usa le istruzioni nelle sezioni Windows e Ubuntu sopra.

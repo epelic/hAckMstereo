@@ -5,7 +5,7 @@ __pycache__/
 venv/
 build/
 dist/
+linux-dist/
 *.spec
 *.log
 config.json
-
