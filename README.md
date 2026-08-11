@@ -1,4 +1,10 @@
-# hAckMstereo
+<p align="center">
+  <img src="assets/hackmstereo-icon.png" width="180" alt="hAckMstereo logo">
+</p>
+
+<h1 align="center">hAckMstereo</h1>
+
+<p align="center"><strong>AM Stereo C-QUAM transmitter for HackRF</strong></p>
 
 **English** · [Italiano](#italiano)
 
