@@ -20,7 +20,7 @@ CONFIG_FILE=APP_DIR/"config.json"
 class TxConfig:
     source:str="Stream URL";stream_url:str="http://dreamsiteradiocp3.com:8000";audio_device:int|None=None
     frequency_hz:int=9_000_000;audio_bw_hz:float=10_000.;input_gain:float=.90;modulation:float=.85
-    limiter_enabled:bool=True;limiter_drive:float=1.35;pilot_enabled:bool=True;pilot_level:float=.04
+    limiter_enabled:bool=True;limiter_drive:float=1.35;preemphasis_enabled:bool=False;pilot_enabled:bool=True;pilot_level:float=.04
     tx_vga:int=47;rf_amp:bool=True;rf_amp_inverted:bool=True;mode:str="C-QUAM"
     dll_path:str=default_hackrf();ffmpeg_path:str=default_ffmpeg();rf_sample_rate:int=8_000_000
     audio_sample_rate:int=100_000;block_frames:int=5000;output_peak:float=.70
