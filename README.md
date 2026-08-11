@@ -36,11 +36,9 @@ Download the latest `hAckMstereo-Setup` from Releases. The installer includes Py
 
 ## Ubuntu
 
-Download the package matching your release, then install it with:
+Ubuntu 26.04 LTS is supported. Install the release package with:
 
 ```bash
-sudo apt install ./hackmstereo_1.0.0-ubuntu24.04_all.deb
-# or
 sudo apt install ./hackmstereo_1.0.0-ubuntu26.04_all.deb
 ```
 

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=hAckMstereo
+Comment=AM Stereo C-QUAM transmitter for HackRF
+Exec=hackmstereo
+Icon=hackmstereo
+Terminal=false
+Categories=AudioVideo;HamRadio;
+Keywords=HackRF;C-QUAM;AM Stereo;SDR;
+
