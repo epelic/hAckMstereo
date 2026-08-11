@@ -75,7 +75,7 @@ class MainWindow(QMainWindow):
         try:self.cfg=self.from_ui();self.cfg.save();self.log.appendPlainText("Configuration saved.")
         except Exception as e:QMessageBox.warning(self,"Configuration",str(e))
     def show_info(self):
-        box=QMessageBox(self);box.setWindowTitle("About hAckMstereo");box.setIcon(QMessageBox.Information);box.setTextFormat(Qt.RichText);box.setTextInteractionFlags(Qt.TextBrowserInteraction);box.setText('hAckMstereo V.1.0.0&nbsp; by Max Epelic<br><a href="http://www.freewaves.it">http://www.freewaves.it</a>');box.exec() if hasattr(box,"exec") else box.exec_()
+        box=QMessageBox(self);box.setWindowTitle("About hAckMstereo");box.setIcon(QMessageBox.Information);box.setTextFormat(Qt.RichText);box.setTextInteractionFlags(Qt.TextBrowserInteraction);box.setText('hAckMstereo V.1.0.2&nbsp; by Max Epelic<br><a href="http://www.freewaves.it">http://www.freewaves.it</a>');box.exec() if hasattr(box,"exec") else box.exec_()
     def on_event(self,kind,text):
         if kind=="hackrf":self.hackrf.setText(text)
         elif kind=="stream":self.stream.setText(text)
