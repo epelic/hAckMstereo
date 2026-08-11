@@ -65,5 +65,4 @@ Description: AM Stereo C-QUAM transmitter for HackRF
     return target
 
 if __name__ == "__main__":
-    for args in [("24.04", "python3-pyside2.qtwidgets"), ("26.04", "python3-pyside6.qtwidgets")]:
-        path = build(*args); print(path, path.stat().st_size)
+    path = build("26.04", "python3-pyside6.qtwidgets"); print(path, path.stat().st_size)
