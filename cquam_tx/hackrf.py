@@ -13,7 +13,7 @@ class HackRFDevice:
         self.lib = self.device = self.callback = None
     @staticmethod
     def _check(code, name):
-        if code != 0: raise RuntimeError(f"{name} fallita (codice {code})")
+        if code != 0: raise RuntimeError(f"{name} failed (code {code})")
     def open(self):
         self.lib = ctypes.CDLL(self.cfg.dll_path)
         l = self.lib
@@ -29,7 +29,7 @@ class HackRFDevice:
         self._check(l.hackrf_init(), "hackrf_init")
         self.device = ctypes.c_void_p(); self._check(l.hackrf_open(ctypes.byref(self.device)), "hackrf_open")
         self._check(l.hackrf_set_sample_rate(self.device, float(self.cfg.rf_sample_rate)), "sample rate")
-        self._check(l.hackrf_set_freq(self.device, self.cfg.frequency_hz), "frequenza")
+        self._check(l.hackrf_set_freq(self.device, self.cfg.frequency_hz), "frequency")
         self._check(l.hackrf_set_txvga_gain(self.device, self.cfg.tx_vga), "TX VGA")
         amp_value = int(not self.cfg.rf_amp) if self.cfg.rf_amp_inverted else int(self.cfg.rf_amp)
         self._check(l.hackrf_set_amp_enable(self.device, amp_value), "RF AMP")
@@ -41,7 +41,7 @@ class HackRFDevice:
             transfer.valid_length = transfer.buffer_length
             return 0
         self.callback = callback
-        self._check(self.lib.hackrf_start_tx(self.device, self.callback, None), "avvio TX")
+        self._check(self.lib.hackrf_start_tx(self.device, self.callback, None), "TX start")
     def close(self):
         if not self.lib: return
         if self.device:
@@ -52,4 +52,3 @@ class HackRFDevice:
         try: self.lib.hackrf_exit()
         except Exception: pass
         self.device = self.lib = self.callback = None
-

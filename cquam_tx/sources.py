@@ -14,7 +14,7 @@ class StreamSource:
         need, data = frames*8, bytearray()
         while len(data) < need:
             block = self.proc.stdout.read(need-len(data))
-            if not block: raise EOFError("Stream interrotto")
+            if not block: raise EOFError("Stream disconnected")
             data.extend(block)
         return np.frombuffer(data, np.float32).reshape(-1, 2)
     def close(self):
@@ -41,7 +41,7 @@ class LineInputSource:
     def __init__(self, cfg): self.cfg, self.stream = cfg, None
     def open(self):
         try: import sounddevice as sd
-        except ImportError as e: raise RuntimeError("Installa sounddevice per usare Line Input") from e
+        except ImportError as e: raise RuntimeError("Install sounddevice to use Line Input") from e
         self.stream = sd.InputStream(device=self.cfg.audio_device, samplerate=self.cfg.audio_sample_rate, channels=2, dtype="float32")
         self.stream.start()
     def read(self, frames):
@@ -55,4 +55,3 @@ def audio_devices():
         import sounddevice as sd
         return [(i, d['name']) for i, d in enumerate(sd.query_devices()) if d['max_input_channels'] >= 2]
     except Exception: return []
-
