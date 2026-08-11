@@ -1,5 +1,5 @@
 #define MyAppName "hAckMstereo"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.1"
 #define MyAppExeName "hAckMstereo.exe"
 
 [Setup]
@@ -9,10 +9,11 @@ AppVersion={#MyAppVersion}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 OutputDir=..\..\outputs
-OutputBaseFilename=hAckMstereo-Setup-1.0.0
+OutputBaseFilename=hAckMstereo-Setup-1.0.1
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
+SetupIconFile=assets\hackmstereo.ico
 PrivilegesRequired=admin
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible

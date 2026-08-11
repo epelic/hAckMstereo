@@ -1,6 +1,7 @@
 from __future__ import annotations
 import sys, traceback
-from .qt import (QTimer, Signal, QObject, Qt, QApplication, QCheckBox, QComboBox, QDoubleSpinBox, QFileDialog, QFormLayout,
+from pathlib import Path
+from .qt import (QTimer, Signal, QObject, Qt, QIcon, QApplication, QCheckBox, QComboBox, QDoubleSpinBox, QFileDialog, QFormLayout,
  QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QMainWindow, QMessageBox, QPushButton, QSpinBox,
  QPlainTextEdit, QVBoxLayout, QWidget)
 from .config import TxConfig
@@ -26,6 +27,9 @@ class Bridge(QObject): event = Signal(str, str)
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__(); self.setWindowTitle("hAckMstereo"); self.resize(1030,720)
+        icon_base = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[1]))
+        icon_path = icon_base / "assets" / "hackmstereo-icon.png"
+        if icon_path.exists(): self.setWindowIcon(QIcon(str(icon_path)))
         try:self.cfg=TxConfig.load()
         except Exception:self.cfg=TxConfig()
         self.bridge=Bridge(); self.bridge.event.connect(self.on_event); self.engine=TxEngine(lambda a,b:self.bridge.event.emit(a,b))

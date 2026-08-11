@@ -2,6 +2,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .venv/
+.build-venv/
 venv/
 build/
 dist/
@@ -9,3 +10,4 @@ linux-dist/
 *.spec
 *.log
 config.json
+assets/*-source.png

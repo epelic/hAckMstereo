@@ -4,7 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "linux-dist"
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 
 DESKTOP = """[Desktop Entry]
 Type=Application
@@ -12,7 +12,7 @@ Name=hAckMstereo
 Comment=AM Stereo C-QUAM transmitter for HackRF
 Comment[it]=Trasmettitore AM Stereo C-QUAM per HackRF
 Exec=hackmstereo
-Icon=audio-input-microphone
+Icon=hackmstereo
 Terminal=false
 Categories=AudioVideo;HamRadio;
 Keywords=HackRF;C-QUAM;AM Stereo;SDR;
@@ -53,6 +53,7 @@ Description: AM Stereo C-QUAM transmitter for HackRF
     control_tgz = tar_bytes([("./control", control.encode(), 0o644)])
     data_files = [("./usr/bin/hackmstereo", LAUNCHER.encode(), 0o755),
                   ("./usr/share/applications/hackmstereo.desktop", DESKTOP.encode(), 0o644),
+                  ("./usr/share/pixmaps/hackmstereo.png", (ROOT/"assets"/"hackmstereo-icon.png").read_bytes(), 0o644),
                   ("./usr/share/doc/hackmstereo/README.md", (ROOT/"README.md").read_bytes(), 0o644),
                   ("./usr/lib/hackmstereo/run.py", (ROOT/"run.py").read_bytes(), 0o644)]
     for path in sorted((ROOT/"cquam_tx").glob("*.py")):
@@ -66,4 +67,3 @@ Description: AM Stereo C-QUAM transmitter for HackRF
 if __name__ == "__main__":
     for args in [("24.04", "python3-pyside2.qtwidgets"), ("26.04", "python3-pyside6.qtwidgets")]:
         path = build(*args); print(path, path.stat().st_size)
-

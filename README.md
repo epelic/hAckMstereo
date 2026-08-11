@@ -26,7 +26,7 @@ It is **not** authorization to transmit over the air. The operator is responsibl
 
 ## Windows
 
-Download `hAckMstereo-Setup-1.0.0.exe` from Releases. The installer includes Python, Qt, FFmpeg and the required HackRF runtime libraries.
+Download the latest `hAckMstereo-Setup` from Releases. The installer includes Python, Qt, FFmpeg and the required HackRF runtime libraries.
 
 ## Ubuntu
 
