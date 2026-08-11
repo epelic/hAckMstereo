@@ -5,6 +5,7 @@
 <h1 align="center">hAckMstereo</h1>
 
 <p align="center"><strong>AM Stereo C-QUAM transmitter for HackRF</strong></p>
+<img width="934" height="731" alt="image" src="https://github.com/user-attachments/assets/748e9676-4436-4df6-8fdd-79e0b48d24db" />
 
 **English** · [Italiano](#italiano)
 
