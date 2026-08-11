@@ -21,6 +21,19 @@ def soft_limiter(x, drive=1.35):
     norm = np.tanh(drive)
     return np.tanh(x * drive) / norm if norm else x
 
+class NrscPreEmphasis:
+    """Modified 75 us AM pre-emphasis: 2122 Hz zero, 8700 Hz pole."""
+    def __init__(self, fs):
+        k=2.0*fs; tau_zero=75e-6; tau_pole=1.0/(2.0*np.pi*8700.0)
+        a0=1.0+k*tau_pole
+        self.b0=(1.0+k*tau_zero)/a0; self.b1=(1.0-k*tau_zero)/a0
+        self.a1=(1.0-k*tau_pole)/a0; self.x1=0.0; self.y1=0.0
+    def process(self,x):
+        y=np.empty_like(x,dtype=np.float64); x1,y1=self.x1,self.y1
+        for i,v in enumerate(x):
+            out=self.b0*v+self.b1*x1-self.a1*y1; y[i]=out; x1,y1=v,out
+        self.x1,self.y1=x1,y1; return y
+
 def interpolate_block(x, previous, factor):
     if previous is None: previous = x[0]
     src = np.concatenate(([previous], x))
@@ -33,6 +46,7 @@ class CquamProcessor:
         self.cfg = cfg
         fir = make_lowpass(cfg.audio_bw_hz, cfg.audio_sample_rate)
         self.left_filter, self.right_filter = FIRFilter(fir), FIRFilter(fir)
+        self.left_pre, self.right_pre = NrscPreEmphasis(cfg.audio_sample_rate), NrscPreEmphasis(cfg.audio_sample_rate)
         self.prev_i = self.prev_q = None
         self.pilot_sample = 0
         self.factor = cfg.rf_sample_rate // cfg.audio_sample_rate
@@ -42,6 +56,8 @@ class CquamProcessor:
         left = stereo[:, 0].astype(np.float64) * c.input_gain
         right = stereo[:, 1].astype(np.float64) * c.input_gain
         vu = (float(np.sqrt(np.mean(left*left))), float(np.sqrt(np.mean(right*right))))
+        if c.preemphasis_enabled:
+            left, right = self.left_pre.process(left), self.right_pre.process(right)
         if c.limiter_enabled:
             left, right = soft_limiter(left, c.limiter_drive), soft_limiter(right, c.limiter_drive)
         left = self.left_filter.process(np.clip(left, -1, 1))
@@ -68,4 +84,3 @@ class CquamProcessor:
         out = np.empty(len(i8)*2, dtype=np.int8); out[0::2] = i8; out[1::2] = q8
         scope = np.asarray(sum_audio[::max(1, frames//256)], dtype=np.float32)
         return out.tobytes(), vu, scope
-

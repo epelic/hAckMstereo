@@ -25,11 +25,12 @@ class TxEngine:
         self.event=event_callback;self.stop_event=threading.Event();self.worker=None;self.buffer=self.device=self.source=None;self.running=False;self.vu=(0.,0.);self.scope=[]
     def start(self,cfg):
         if self.running:return
-        cfg.validate();self.stop_event.clear();self.buffer=IQBuffer(cfg.rf_sample_rate);sources={"Stream":StreamSource,"Live":LineInputSource,"Test tones":TestToneSource}
+        cfg.validate();self.stop_event.clear();live=cfg.source=="Live";self.buffer=IQBuffer(cfg.rf_sample_rate,1.1 if live else .55);sources={"Stream":StreamSource,"Live":LineInputSource,"Test tones":TestToneSource}
         self.source=sources[cfg.source](cfg);self.event("stream","Connecting...");self.source.open();self.event("stream","OK")
         processor=CquamProcessor(cfg);self.device=HackRFDevice(cfg,self.buffer);self.device.open();self.event("hackrf","Ready")
-        self.worker=threading.Thread(target=self._produce,args=(cfg,processor),daemon=True);self.worker.start();deadline=time.monotonic()+4
-        while self.buffer.seconds<.35 and self.worker.is_alive() and time.monotonic()<deadline:time.sleep(.02)
+        self.worker=threading.Thread(target=self._produce,args=(cfg,processor),daemon=True);self.worker.start();deadline=time.monotonic()+6
+        preload=.8 if live else .35
+        while self.buffer.seconds<preload and self.worker.is_alive() and time.monotonic()<deadline:time.sleep(.02)
         self.device.start();self.running=True;self.event("log","C-QUAM TX ON AIR")
     def _produce(self,cfg,processor):
         try:

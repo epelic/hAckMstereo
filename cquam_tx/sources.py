@@ -42,7 +42,9 @@ class LineInputSource:
     def open(self):
         try: import sounddevice as sd
         except ImportError as e: raise RuntimeError("Install sounddevice to use Line Input") from e
-        self.stream = sd.InputStream(device=self.cfg.audio_device, samplerate=self.cfg.audio_sample_rate, channels=2, dtype="float32")
+        self.stream = sd.InputStream(device=self.cfg.audio_device, samplerate=self.cfg.audio_sample_rate,
+                                     channels=2, dtype="float32", blocksize=self.cfg.block_frames,
+                                     latency="high")
         self.stream.start()
     def read(self, frames):
         data, overflow = self.stream.read(frames)
