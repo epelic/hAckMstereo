@@ -7,6 +7,10 @@
 <p align="center"><strong>AM Stereo C-QUAM transmitter for HackRF</strong></p>
 <img width="934" height="731" alt="image" src="https://github.com/user-attachments/assets/748e9676-4436-4df6-8fdd-79e0b48d24db" />
 
+Here in action
+https://youtu.be/L93z2_igO28?si=U_a6YWYF9DIPBhmu
+
+
 **English** · [Italiano](#italiano)
 
 hAckMstereo is a Windows and Linux desktop transmitter for generating **AM Stereo C-QUAM** baseband with a HackRF. It accepts an internet radio stream, a stereo line input, or built-in 400 Hz left / 1 kHz right test tones and produces continuous 8 Msps I/Q through libhackrf.
