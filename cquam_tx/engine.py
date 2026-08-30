@@ -22,16 +22,18 @@ class IQBuffer:
 
 class TxEngine:
     def __init__(self,event_callback=lambda *_:None):
-        self.event=event_callback;self.stop_event=threading.Event();self.worker=None;self.buffer=self.device=self.source=None;self.running=False;self.vu=(0.,0.);self.scope=[]
+        self.event=event_callback;self.stop_event=threading.Event();self.worker=None;self.buffer=self.device=self.source=self.processor=None;self.running=False;self.vu=(0.,0.);self.scope=[]
     def start(self,cfg):
         if self.running:return
         cfg.validate();self.stop_event.clear();live=cfg.source=="Live";self.buffer=IQBuffer(cfg.rf_sample_rate,1.1 if live else .55);sources={"Stream":StreamSource,"Live":LineInputSource,"Test tones":TestToneSource}
         self.source=sources[cfg.source](cfg);self.event("stream","Connecting...");self.source.open();self.event("stream","OK")
-        processor=CquamProcessor(cfg);self.device=HackRFDevice(cfg,self.buffer);self.device.open();self.event("hackrf","Ready")
+        processor=CquamProcessor(cfg);self.processor=processor;self.device=HackRFDevice(cfg,self.buffer);self.device.open();self.event("hackrf","Ready")
         self.worker=threading.Thread(target=self._produce,args=(cfg,processor),daemon=True);self.worker.start();deadline=time.monotonic()+6
         preload=.8 if live else .35
         while self.buffer.seconds<preload and self.worker.is_alive() and time.monotonic()<deadline:time.sleep(.02)
         self.device.start();self.running=True;self.event("log","C-QUAM TX ON AIR")
+    def update_audio_processing(self,input_gain,eq_gains_db):
+        if self.processor:self.processor.set_audio_processing(input_gain,eq_gains_db)
     def _produce(self,cfg,processor):
         try:
             while not self.stop_event.is_set():
@@ -44,5 +46,5 @@ class TxEngine:
         if self.source:self.source.close()
         if self.worker and self.worker.is_alive():self.worker.join(timeout=2)
         if self.device:self.device.close()
-        self.running=False;self.event("stream","Stopped");self.event("hackrf","Disconnected");self.event("log","TX stopped")
+        self.running=False;self.processor=None;self.event("stream","Stopped");self.event("hackrf","Disconnected");self.event("log","TX stopped")
     def status(self):return {"running":self.running,"buffer":self.buffer.seconds if self.buffer else 0,"underruns":self.buffer.underruns if self.buffer else 0,"vu":self.vu,"scope":self.scope}

@@ -1,6 +1,8 @@
 from __future__ import annotations
 import numpy as np
 
+EQ_FREQUENCIES = (50, 250, 500, 1000, 2500, 5000, 7500, 10000, 12500, 15000)
+
 def make_lowpass(cutoff: float, fs: int, taps: int = 257) -> np.ndarray:
     fc = cutoff / fs
     n = np.arange(taps) - (taps - 1) / 2
@@ -16,6 +18,17 @@ class FIRFilter:
         y = np.convolve(extended, self.h, mode="valid")
         self.state = extended[-(len(self.h) - 1):]
         return y
+
+def make_equalizer(gains_db, fs: int, taps: int = 513) -> np.ndarray:
+    """Build one linear-phase FIR from the ten fixed graphic-EQ bands."""
+    nfft = 2048
+    bins = np.fft.rfftfreq(nfft, 1.0/fs)
+    anchors = np.asarray((0, *EQ_FREQUENCIES, fs/2), dtype=np.float64)
+    gains = np.asarray((gains_db[0], *gains_db, gains_db[-1]), dtype=np.float64)
+    db = np.interp(bins, anchors, gains)
+    impulse = np.fft.fftshift(np.fft.irfft(10.0**(db/20.0), nfft))
+    center = nfft//2; half = taps//2
+    return (impulse[center-half:center+half+1] * np.hamming(taps)).astype(np.float64)
 
 def soft_limiter(x, drive=1.35):
     norm = np.tanh(drive)
@@ -46,15 +59,37 @@ class CquamProcessor:
         self.cfg = cfg
         fir = make_lowpass(cfg.audio_bw_hz, cfg.audio_sample_rate)
         self.left_filter, self.right_filter = FIRFilter(fir), FIRFilter(fir)
+        eq = make_equalizer(cfg.eq_gains_db, cfg.audio_sample_rate)
+        self.left_eq, self.right_eq = FIRFilter(eq), FIRFilter(eq)
+        self.input_gain = float(cfg.input_gain)
+        self.eq_gains_db = tuple(float(v) for v in cfg.eq_gains_db)
+        self.pending_eq_gains_db = self.eq_gains_db
         self.left_pre, self.right_pre = NrscPreEmphasis(cfg.audio_sample_rate), NrscPreEmphasis(cfg.audio_sample_rate)
         self.prev_i = self.prev_q = None
         self.pilot_sample = 0
         self.factor = cfg.rf_sample_rate // cfg.audio_sample_rate
 
+    def set_audio_processing(self, input_gain, eq_gains_db):
+        """Called by the UI; scalar/tuple assignment is atomic in CPython."""
+        self.input_gain = max(0.0, min(4.0, float(input_gain)))
+        values = tuple(max(-12.0, min(12.0, float(v))) for v in eq_gains_db)
+        if len(values) != len(EQ_FREQUENCIES):
+            raise ValueError("The equalizer requires ten bands")
+        self.pending_eq_gains_db = values
+
     def process(self, stereo):
         c = self.cfg
-        left = stereo[:, 0].astype(np.float64) * c.input_gain
-        right = stereo[:, 1].astype(np.float64) * c.input_gain
+        left = stereo[:, 0].astype(np.float64)
+        right = stereo[:, 1].astype(np.float64)
+        pending = self.pending_eq_gains_db
+        if pending != self.eq_gains_db:
+            coefficients = make_equalizer(pending, c.audio_sample_rate)
+            self.left_eq.h = coefficients
+            self.right_eq.h = coefficients
+            self.eq_gains_db = pending
+        left, right = self.left_eq.process(left), self.right_eq.process(right)
+        gain = self.input_gain
+        left, right = left * gain, right * gain
         vu = (float(np.sqrt(np.mean(left*left))), float(np.sqrt(np.mean(right*right))))
         if c.preemphasis_enabled:
             left, right = self.left_pre.process(left), self.right_pre.process(right)

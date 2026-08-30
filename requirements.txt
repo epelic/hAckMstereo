@@ -1,4 +1,6 @@
 numpy>=2.0
-PySide6>=6.7
+# Qt 6.8 LTS remains compatible with the Windows 10 systems supported here.
+# Keep PySide6 and Shiboken from drifting to a newer, incompatible Qt runtime.
+PySide6==6.8.3
 sounddevice>=0.5
 

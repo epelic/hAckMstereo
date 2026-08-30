@@ -1,5 +1,5 @@
 #define MyAppName "hAckMstereo"
-#define MyAppVersion "1.0.3"
+#define MyAppVersion "1.0.4"
 #define MyAppExeName "hAckMstereo.exe"
 
 [Setup]
@@ -9,7 +9,7 @@ AppVersion={#MyAppVersion}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 OutputDir=..\..\outputs
-OutputBaseFilename=hAckMstereo-Setup-1.0.3
+OutputBaseFilename=hAckMstereo-Setup-1.0.4
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
@@ -29,6 +29,10 @@ Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription:
 [Files]
 Source: "dist\hAckMstereo\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "assets\hackmstereo.ico"; DestDir: "{app}"; Flags: ignoreversion
+
+[InstallDelete]
+; Remove every DLL from a previous build before installing the matching Qt set.
+Type: filesandordirs; Name: "{app}\*"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\hackmstereo.ico"
