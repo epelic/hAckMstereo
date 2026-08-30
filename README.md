@@ -35,6 +35,7 @@ It is **not** authorization to transmit over the air. The operator is responsibl
 - Windows-style PySide interface with L/R VU meters and a lightweight scope
 - frequency, audio bandwidth, input gain, modulation, TX VGA and RF AMP controls
 - Mono/C-QUAM modes, configurable 25 Hz pilot and soft limiter
+- live source-volume control and ten-band ±12 dB equalizer before the volume stage
 - buffer and underrun monitoring, saved configuration and clean FFmpeg shutdown
 - direct libhackrf output at 8 Msps
 
@@ -85,6 +86,7 @@ Il software **non costituisce un'autorizzazione a trasmettere via etere**. Filtr
 - interfaccia PySide con VU meter L/R e scope leggero
 - frequenza, bandwidth, gain audio, modulazione, TX VGA e RF AMP
 - modalità Mono/C-QUAM, pilot 25 Hz configurabile e soft limiter
+- volume sorgente regolabile durante il TX ed equalizzatore a 10 bande ±12 dB prima del volume
 - monitor buffer/underrun, configurazione salvata e chiusura pulita di FFmpeg
 - uscita diretta libhackrf a 8 Msps
 

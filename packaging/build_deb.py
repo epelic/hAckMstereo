@@ -4,7 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "linux-dist"
-VERSION = "1.0.3"
+VERSION = "1.0.4"
 
 DESKTOP = """[Desktop Entry]
 Type=Application

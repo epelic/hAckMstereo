@@ -3,7 +3,7 @@ name: Build and test Ubuntu packages
 on:
   workflow_dispatch:
   push:
-    branches: ["agent/bundled-ubuntu-packages"]
+    branches: ["main"]
 
 jobs:
   package:
@@ -19,9 +19,9 @@ jobs:
             libxkbcommon-x11-0 libxcb-cursor0
       - uses: actions/checkout@v4
       - name: Build bundled package
-        run: bash packaging/build_linux_bundle.sh 26.04 1.0.3
+        run: bash packaging/build_linux_bundle.sh 26.04 1.0.4
       - name: Install package
-        run: apt-get install -y ./linux-dist/hackmstereo_1.0.3-ubuntu26.04_amd64.deb
+        run: apt-get install -y ./linux-dist/hackmstereo_1.0.4-ubuntu26.04_amd64.deb
       - name: Smoke-test imports and GUI startup
         run: |
           test -x /opt/hackmstereo/hAckMstereo

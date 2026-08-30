@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 import ctypes.util, json, os, shutil, sys
 from pathlib import Path
 
@@ -20,6 +20,7 @@ CONFIG_FILE=APP_DIR/"config.json"
 class TxConfig:
     source:str="Stream URL";stream_url:str="http://dreamsiteradiocp3.com:8000";audio_device:int|None=None
     frequency_hz:int=9_000_000;audio_bw_hz:float=10_000.;input_gain:float=.90;modulation:float=.85
+    eq_gains_db:list[float]=field(default_factory=lambda:[0.0]*10)
     limiter_enabled:bool=True;limiter_drive:float=1.35;preemphasis_enabled:bool=False;pilot_enabled:bool=True;pilot_level:float=.04
     tx_vga:int=47;rf_amp:bool=True;rf_amp_inverted:bool=True;mode:str="C-QUAM"
     dll_path:str=default_hackrf();ffmpeg_path:str=default_ffmpeg();rf_sample_rate:int=8_000_000
@@ -28,6 +29,7 @@ class TxConfig:
         if not 100_000<=self.frequency_hz<=6_000_000_000:raise ValueError("Frequency is out of range")
         if not 1_000<=self.audio_bw_hz<=15_000:raise ValueError("Audio bandwidth must be 1–15 kHz")
         if not 0<=self.input_gain<=4:raise ValueError("Input gain must be 0–4")
+        if len(self.eq_gains_db)!=10 or any(not -12<=float(v)<=12 for v in self.eq_gains_db):raise ValueError("Equalizer gains must contain 10 values between -12 and +12 dB")
         if not 0<=self.modulation<=.95:raise ValueError("Maximum modulation is 95%")
         if not 0<=self.pilot_level<=.10:raise ValueError("Maximum pilot level is 10%")
         if not 0<=self.tx_vga<=47:raise ValueError("TX VGA must be 0–47 dB")

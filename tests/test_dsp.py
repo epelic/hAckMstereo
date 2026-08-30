@@ -1,6 +1,6 @@
 import numpy as np
 from cquam_tx.config import TxConfig
-from cquam_tx.dsp import CquamProcessor, soft_limiter
+from cquam_tx.dsp import CquamProcessor, make_equalizer, soft_limiter
 
 def test_block_size_and_range():
     c=TxConfig(block_frames=100); p=CquamProcessor(c); x=np.zeros((100,2),np.float32)
@@ -17,4 +17,15 @@ def test_tones_keep_stereo_difference():
     x=np.column_stack((.3*np.sin(2*np.pi*400*n/c.audio_sample_rate),.3*np.sin(2*np.pi*1000*n/c.audio_sample_rate))).astype(np.float32)
     raw,vu,_=p.process(x); iq=np.frombuffer(raw,np.int8).reshape(-1,2)
     assert vu[0]>0 and vu[1]>0 and np.std(iq[:,1])>0
+
+def test_flat_equalizer_is_unity():
+    h=make_equalizer([0]*10,100_000)
+    assert np.isclose(h[len(h)//2],1.0,atol=1e-10)
+    assert np.sum(np.abs(h))-1.0<1e-8
+
+def test_live_volume_and_equalizer_update():
+    c=TxConfig(block_frames=1000,limiter_enabled=False);p=CquamProcessor(c);n=np.arange(1000)
+    x=np.column_stack((.1*np.sin(2*np.pi*1000*n/c.audio_sample_rate),)*2).astype(np.float32)
+    p.process(x);p.set_audio_processing(2.0,[0,0,0,12,0,0,0,0,0,0]);_,vu,_=p.process(x)
+    assert vu[0]>.15 and vu[1]>.15
 
