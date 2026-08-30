@@ -30,6 +30,10 @@ Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription:
 Source: "dist\hAckMstereo\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "assets\hackmstereo.ico"; DestDir: "{app}"; Flags: ignoreversion
 
+[InstallDelete]
+; Remove every DLL from a previous build before installing the matching Qt set.
+Type: filesandordirs; Name: "{app}\*"
+
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\hackmstereo.ico"
 Name: "{group}\Uninstall {#MyAppName}"; Filename: "{uninstallexe}"
